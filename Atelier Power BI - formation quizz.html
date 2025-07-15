@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Power BI - Test de connaissances</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --main: #2a75d5;
+            --main-dark: #1e5bb0;
+            --accent: #ffd700;
+            --bg-light: #f6f9fe;
+            --gray-dark: #333;
+            --gray-medium: #666;
+            --gray-light: #ddd;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --warning: #f39c12;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-dark);
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--main), var(--main-dark));
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: -2rem auto 2rem;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar h3 {
+            font-size: 1rem;
+            color: var(--gray-medium);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-track {
+            background: var(--gray-light);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--main), var(--accent));
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .question-number {
+            background: var(--main);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-dark);
+        }
+
+        .options {
+            margin-top: 1.5rem;
+        }
+
+        .option {
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover:not(.disabled) {
+            border-color: var(--main);
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: var(--main);
+            background: rgba(42, 117, 213, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .option-indicator {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-light);
+            border-radius: 50%;
+            margin-right: 1rem;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-indicator {
+            border-color: var(--main);
+        }
+
+        .option.selected .option-indicator::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: var(--main);
+            border-radius: 50%;
+        }
+
+        .option.correct .option-indicator {
+            border-color: var(--success);
+            background: var(--success);
+        }
+
+        .option.correct .option-indicator::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .option.incorrect .option-indicator {
+            border-color: var(--error);
+            background: var(--error);
+        }
+
+        .option.incorrect .option-indicator::after {
+            content: "✗";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: rgba(39, 174, 96, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--error);
+            color: var(--error);
+        }
+
+        .feedback-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .explanation {
+            margin-top: 0.5rem;
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--main);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--main-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 117, 213, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--main);
+            border: 2px solid var(--main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--main);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 3rem;
+            text-align: center;
+            display: none;
+        }
+
+        .results-card.show {
+            display: block;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--gray-light);
+            stroke-width: 10;
+        }
+
+        .score-circle-fill {
+            fill: none;
+            stroke: var(--main);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--main);
+        }
+
+        .results-message {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .results-details {
+            color: var(--gray-medium);
+            margin-bottom: 2rem;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .score-breakdown {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--main);
+        }
+
+        .breakdown-label {
+            font-size: 0.875rem;
+            color: var(--gray-medium);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .quiz-container {
+                margin: -1rem auto 1rem;
+                padding: 1rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+
+            .results-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Quiz Power BI</h1>
+            <p>Testez vos connaissances après la formation</p>
+        </div>
+    </header>
+
+    <div class="quiz-container">
+        <div class="progress-bar">
+            <h3>
+                <span>Progression</span>
+                <span id="progress-text">Question 1 sur 10</span>
+            </h3>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Questions -->
+        <div id="quiz-questions">
+            <!-- Question 1 -->
+            <div class="question-card active" data-question="1">
+                <div class="question-header">
+                    <div class="question-number">1</div>
+                    <div class="question-text">Dans Power BI, qu'est-ce qui est recommandé pour une utilisation quotidienne des dashboards ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Les espaces de travail</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Les applications</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Les deux sont équivalents</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Aucun des deux</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Correct !</div>
+                    <div class="explanation">Les applications sont effectivement à privilégier pour une utilisation quotidienne car elles offrent une interface optimisée et des dashboards prêts à l'emploi.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" disabled>Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-1" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card" data-question="2">
+                <div class="question-header">
+                    <div class="question-number">2</div>
+                    <div class="question-text">Quand utilise-t-on les espaces de travail dans Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Pour consulter des rapports uniquement</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Lors des mises à jour à votre main</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Pour partager avec des externes</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Jamais, ils sont obsolètes</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Excellent !</div>
+                    <div class="explanation">Les espaces de travail sont parfaits pour éditer des rapports et collaborer lors des mises à jour.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(2)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-2" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card" data-question="3">
+                <div class="question-header">
+                    <div class="question-number">3</div>
+                    <div class="question-text">Quel type de filtre s'applique uniquement à la visualisation sélectionnée ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Filtre sur ce visuel</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Filtre dans cette page</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Filtre dans toutes les pages</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Filtre global</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="a">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Parfait !</div>
+                    <div class="explanation">Le "Filtre sur ce visuel" limite l'application du filtre à la visualisation sélectionnée uniquement.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(3)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-3" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card" data-question="4">
+                <div class="question-header">
+                    <div class="question-number">4</div>
+                    <div class="question-text">Comment reconnaît-on qu'un filtre est sélectionné dans Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Il clignote</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Il devient plus grand</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Il passe à une autre couleur que blanc</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Un son est émis</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="c">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Bien joué !</div>
+                    <div class="explanation">Un filtre actif change de couleur (généralement devient grisé ou coloré) par rapport au blanc par défaut.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(4)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-4" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card" data-question="5">
+                <div class="question-header">
+                    <div class="question-number">5</div>
+                    <div class="question-text">Parmi ces actions, lesquelles peut-on effectuer sur un visuel Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Uniquement copier et agrandir</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Copier, agrandir, mais pas exporter</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Copier, agrandir, partager, commenter et exporter</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Seulement visualiser</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="c">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Excellente réponse !</div>
+                    <div class="explanation">Power BI offre de nombreuses options : copier, agrandir, partager, commenter, exporter et bien plus encore.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(5)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-5" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card" data-question="6">
+                <div class="question-header">
+                    <div class="question-number">6</div>
+                    <div class="question-text">À quoi servent les signets dans Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>À marquer des pages favorites</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>À sauvegarder un état spécifique du rapport avec les filtres appliqués</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>À créer des marque-pages physiques</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>À noter des commentaires</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Très bien !</div>
+                    <div class="explanation">Les signets permettent de sauvegarder et de réappliquer rapidement une configuration spécifique de filtres et de visualisation.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(6)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-6" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card" data-question="7">
+                <div class="question-header">
+                    <div class="question-number">7</div>
+                    <div class="question-text">Que faut-il faire pour intégrer des rapports Power BI dans PowerPoint ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Faire des captures d'écran uniquement</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Installer un complément dans PowerPoint</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Copier-coller les graphiques</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>C'est impossible</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Correct !</div>
+                    <div class="explanation">Il faut installer le complément officiel Power BI dans PowerPoint pour intégrer dynamiquement vos rapports.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(7)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-7" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card" data-question="8">
+                <div class="question-header">
+                    <div class="question-number">8</div>
+                    <div class="question-text">Quelle condition est nécessaire pour s'abonner aux dashboards Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Avoir une adresse email</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Avoir une licence Power BI</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Être administrateur</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Aucune condition particulière</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Exact !</div>
+                    <div class="explanation">L'abonnement aux dashboards nécessite une licence Power BI pour recevoir les mises à jour automatiques par email.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(8)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-8" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card" data-question="9">
+                <div class="question-header">
+                    <div class="question-number">9</div>
+                    <div class="question-text">Si vous appliquez un filtre "dans toutes les pages", sur quoi s'applique-t-il ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Uniquement sur la page actuelle</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Sur le visuel sélectionné uniquement</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Sur tous les éléments de toutes les pages du rapport</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Sur la première et dernière page seulement</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="c">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Bravo !</div>
+                    <div class="explanation">Le filtre "dans toutes les pages" s'applique à l'ensemble des éléments de toutes les pages du rapport, offrant une cohérence globale.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(9)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-9" disabled>Suivant</button>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card" data-question="10">
+                <div class="question-header">
+                    <div class="question-number">10</div>
+                    <div class="question-text">Quel est l'avantage principal d'utiliser des signets dans Power BI ?</div>
+                </div>
+                <div class="options">
+                    <div class="option" data-answer="a">
+                        <div class="option-indicator"></div>
+                        <span>Ils rendent les rapports plus colorés</span>
+                    </div>
+                    <div class="option" data-answer="b">
+                        <div class="option-indicator"></div>
+                        <span>Ils permettent un gain de temps en sauvegardant des configurations de filtres</span>
+                    </div>
+                    <div class="option" data-answer="c">
+                        <div class="option-indicator"></div>
+                        <span>Ils augmentent la vitesse de chargement</span>
+                    </div>
+                    <div class="option" data-answer="d">
+                        <div class="option-indicator"></div>
+                        <span>Ils réduisent la taille des fichiers</span>
+                    </div>
+                </div>
+                <div class="feedback" data-correct="b">
+                    <div><i class="fas fa-check-circle feedback-icon"></i>Parfait !</div>
+                    <div class="explanation">Les signets offrent un gain de temps considérable en permettant de retrouver rapidement des configurations de filtres utilisées régulièrement.</div>
+                </div>
+                <div class="quiz-controls">
+                    <button class="btn btn-secondary" onclick="previousQuestion(10)">Précédent</button>
+                    <button class="btn btn-primary" id="next-btn-10" onclick="showResults()">Voir les résultats</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-card" id="results-card">
+            <div class="score-circle">
+                <svg width="150" height="150">
+                    <circle cx="75" cy="75" r="70" class="score-circle-bg"></circle>
+                    <circle cx="75" cy="75" r="70" class="score-circle-fill" id="score-circle"></circle>
+                </svg>
+                <div class="score-text" id="score-text">0%</div>
+            </div>
+            
+            <h2 class="results-message" id="results-message">Félicitations !</h2>
+            <p class="results-details" id="results-details">Vous avez complété le quiz</p>
+            
+            <div class="score-breakdown">
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">✅</div>
+                    <div class="breakdown-value" id="correct-count">0</div>
+                    <div class="breakdown-label">Bonnes réponses</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">❌</div>
+                    <div class="breakdown-value" id="incorrect-count">0</div>
+                    <div class="breakdown-label">Mauvaises réponses</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">⏱️</div>
+                    <div class="breakdown-value" id="time-taken">0:00</div>
+                    <div class="breakdown-label">Temps écoulé</div>
+                </div>
+            </div>
+            
+            <div class="results-actions">
+                <button class="btn btn-secondary" onclick="reviewAnswers()">Revoir les réponses</button>
+                <button class="btn btn-primary" onclick="restartQuiz()">Recommencer le quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 10;
+        let answers = {};
+        let startTime = Date.now();
+
+        // Initialize quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click listeners to all options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!this.classList.contains('disabled')) {
+                        selectAnswer(this);
+                    }
+                });
+            });
+        });
+
+        function selectAnswer(optionElement) {
+            const questionCard = optionElement.closest('.question-card');
+            const questionNumber = parseInt(questionCard.dataset.question);
+            const selectedAnswer = optionElement.dataset.answer;
+            const correctAnswer = questionCard.querySelector('.feedback').dataset.correct;
+            
+            // Disable all options
+            questionCard.querySelectorAll('.option').forEach(opt => {
+                opt.classList.add('disabled');
+                opt.classList.remove('selected');
+            });
+            
+            // Mark selected option
+            optionElement.classList.add('selected');
+            
+            // Show if correct or incorrect
+            if (selectedAnswer === correctAnswer) {
+                optionElement.classList.add('correct');
+                questionCard.querySelector('.feedback').classList.add('correct', 'show');
+            } else {
+                optionElement.classList.add('incorrect');
+                // Mark the correct answer
+                questionCard.querySelector(`[data-answer="${correctAnswer}"]`).classList.add('correct');
+                
+                // Update feedback for incorrect answer
+                const feedback = questionCard.querySelector('.feedback');
+                feedback.classList.add('incorrect', 'show');
+                feedback.innerHTML = `
+                    <div><i class="fas fa-times-circle feedback-icon"></i>Pas tout à fait...</div>
+                    <div class="explanation">${feedback.querySelector('.explanation').textContent}</div>
+                `;
+            }
+            
+            // Store answer
+            answers[questionNumber] = {
+                selected: selectedAnswer,
+                correct: selectedAnswer === correctAnswer
+            };
+            
+            // Enable next button
+            document.getElementById(`next-btn-${questionNumber}`).disabled = false;
+        }
+
+        function nextQuestion(current) {
+            const currentCard = document.querySelector(`[data-question="${current}"]`);
+            const nextCard = document.querySelector(`[data-question="${current + 1}"]`);
+            
+            currentCard.classList.remove('active');
+            if (nextCard) {
+                nextCard.classList.add('active');
+                updateProgress(current + 1);
+            }
+        }
+
+        function previousQuestion(current) {
+            const currentCard = document.querySelector(`[data-question="${current}"]`);
+            const prevCard = document.querySelector(`[data-question="${current - 1}"]`);
+            
+            currentCard.classList.remove('active');
+            if (prevCard) {
+                prevCard.classList.add('active');
+                updateProgress(current - 1);
+            }
+        }
+
+        function updateProgress(questionNumber) {
+            currentQuestion = questionNumber;
+            const percentage = (questionNumber / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = `Question ${questionNumber} sur ${totalQuestions}`;
+        }
+
+        function showResults() {
+            // Hide all question cards
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Calculate results
+            const correctCount = Object.values(answers).filter(a => a.correct).length;
+            const incorrectCount = totalQuestions - correctCount;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            
+            // Calculate time taken
+            const endTime = Date.now();
+            const timeTaken = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+            
+            // Update results display
+            document.getElementById('score-text').textContent = percentage + '%';
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+            document.getElementById('time-taken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update score circle
+            const circumference = 2 * Math.PI * 70;
+            const offset = circumference - (percentage / 100) * circumference;
+            document.getElementById('score-circle').style.strokeDashoffset = offset;
+            
+            // Update message based on score
+            let message, details;
+            if (percentage >= 80) {
+                message = "Excellent travail ! 🎉";
+                details = "Vous maîtrisez très bien Power BI !";
+            } else if (percentage >= 60) {
+                message = "Bon travail ! 👍";
+                details = "Vous avez de bonnes bases en Power BI.";
+            } else {
+                message = "Continuez vos efforts ! 💪";
+                details = "N'hésitez pas à revoir la formation.";
+            }
+            
+            document.getElementById('results-message').textContent = message;
+            document.getElementById('results-details').textContent = details;
+            
+            // Show results card
+            document.getElementById('results-card').classList.add('show');
+            
+            // Hide progress bar
+            document.querySelector('.progress-bar').style.display = 'none';
+        }
+
+        function reviewAnswers() {
+            // Show all questions with answers
+            document.getElementById('results-card').classList.remove('show');
+            document.querySelector('.progress-bar').style.display = 'block';
+            
+            // Show first question
+            document.querySelector('[data-question="1"]').classList.add('active');
+            updateProgress(1);
+            
+            // Disable all next buttons except navigation
+            for (let i = 1; i <= totalQuestions; i++) {
+                const btn = document.getElementById(`next-btn-${i}`);
+                if (i < totalQuestions) {
+                    btn.textContent = 'Suivant';
+                    btn.onclick = function() { nextQuestion(i); };
+                    btn.disabled = false;
+                } else {
+                    btn.textContent = 'Retour aux résultats';
+                    btn.onclick = showResults;
+                }
+            }
+        }
+
+        function restartQuiz() {
+            // Reset everything
+            answers = {};
+            currentQuestion = 1;
+            startTime = Date.now();
+            
+            // Hide results
+            document.getElementById('results-card').classList.remove('show');
+            document.querySelector('.progress-bar').style.display = 'block';
+            
+            // Reset all questions
+            document.querySelectorAll('.question-card').forEach((card, index) => {
+                // Remove active class
+                card.classList.remove('active');
+                
+                // Reset options
+                card.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                });
+                
+                // Hide feedback
+                card.querySelector('.feedback').classList.remove('show', 'correct', 'incorrect');
+                
+                // Reset buttons
+                const questionNum = index + 1;
+                const nextBtn = document.getElementById(`next-btn-${questionNum}`);
+                nextBtn.disabled = true;
+                if (questionNum < totalQuestions) {
+                    nextBtn.textContent = 'Suivant';
+                    nextBtn.onclick = function() { nextQuestion(questionNum); };
+                }
+            });
+            
+            // Show first question
+            document.querySelector('[data-question="1"]').classList.add('active');
+            updateProgress(1);
+        }
+
+        // Add click handlers for next buttons
+        for (let i = 1; i < totalQuestions; i++) {
+            document.getElementById(`next-btn-${i}`).onclick = function() { nextQuestion(i); };
+        }
+    </script>
+</body>
+</html>
