@@ -1,1 +1,813 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Atelier Power BI - Formation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --main: #2a75d5;
+            --main-dark: #1e5bb0;
+            --accent: #ffd700;
+            --accent-light: #ffe44d;
+            --bg-light: #f6f9fe;
+            --gray-dark: #333;
+            --gray-medium: #666;
+            --gray-light: #ddd;
+            --success: #27ae60;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 70px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-dark);
+            background: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #3a86ff, #2a75d5, #1e5bb0);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header .date {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            fill: var(--bg-light);
+        }
+
+        nav {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 0.5rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            color: var(--main);
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding: 0.5rem;
+            justify-content: center;
+        }
+
+        .nav-item a {
+            color: var(--gray-medium);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-item a:hover {
+            color: var(--main);
+            background: rgba(42, 117, 213, 0.1);
+        }
+
+        .nav-item a.active {
+            color: white;
+            background: var(--main);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .section-icon {
+            background: var(--main);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            box-shadow: 0 4px 10px rgba(42, 117, 213, 0.3);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--main-dark);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            height: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--main);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: var(--main);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card h3 i {
+            margin-right: 0.75rem;
+            color: var(--accent);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .feature-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.75rem;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 0.15em;
+            color: var(--success);
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .steps li {
+            margin-bottom: 1.25rem;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 0;
+            top: 0.1em;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background: var(--main);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .steps strong {
+            color: var(--main-dark);
+        }
+
+        .image-container {
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin: 2rem 0;
+            border: 1px solid var(--gray-light);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .highlight-box {
+            background: rgba(42, 117, 213, 0.1);
+            border-left: 4px solid var(--main);
+            padding: 1.5rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 2rem 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--main-dark);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .highlight-box h4::before {
+            content: "\f0eb";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 0.75rem;
+            color: var(--accent);
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            color: var(--main);
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            transition: all 0.3s;
+            background-color: rgba(42, 117, 213, 0.05);
+        }
+
+        .resource-link:hover {
+            color: var(--main-dark);
+            background-color: rgba(42, 117, 213, 0.1);
+            transform: translateX(5px);
+        }
+
+        .resource-link i {
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+
+        footer {
+            background: linear-gradient(to right, var(--main-dark), #104f86);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.25rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <span class="date" id="current-date">17 avril 2023</span>
+            <h1>Atelier Power BI</h1>
+            <p>Maîtrisez les fonctionnalités essentielles de Power BI pour créer et exploiter vos dashboards</p>
+        </div>
+        <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100">
+            <path fill-opacity="1" d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,42.7C840,32,960,32,1080,42.7C1200,53,1320,75,1380,85.3L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+        </svg>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                Power BI
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="#espaces" class="active">Espaces</a></li>
+                <li class="nav-item"><a href="#filtres">Filtres</a></li>
+                <li class="nav-item"><a href="#visuels">Utiliser un visuel</a></li>
+                <li class="nav-item"><a href="#interactions">Interactions</a></li>
+                <li class="nav-item"><a href="#signets">Signets</a></li>
+                <li class="nav-item"><a href="#export">Export & partage</a></li>
+                <li class="nav-item"><a href="#commentaires">Commentaires</a></li>
+                <li class="nav-item"><a href="#alertes">Alertes</a></li>
+                <li class="nav-item"><a href="#reporting">Reporting PPT</a></li>
+                <li class="nav-item"><a href="#abonnements">Abonnements</a></li>
+                <li class="nav-item"><a href="#ressources">Ressources</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="espaces">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h2>Les différents espaces</h2>
+            </div>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3><i class="fas fa-th-large"></i>Applications</h3>
+                    <p>Les applications sont à privilégier pour une utilisation quotidienne des dashboards.</p>
+                    <ul class="feature-list">
+                        <li>Interface utilisateur optimisée</li>
+                        <li>Partage facilité</li>
+                        <li>Dashboards prêts à l'emploi</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-project-diagram"></i>Espaces de travail</h3>
+                    <p>Les espaces de travail sont à utiliser lors des mises à jour à votre main.</p>
+                    <ul class="feature-list">
+                        <li>Édition des rapports</li>
+                        <li>Collaboration entre équipes</li>
+                        <li>Environnement de développement</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="filtres">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <h2>Les filtres</h2>
+            </div>
+
+            <div class="card">
+                <p>Les filtres permettent d'affiner les données présentées dans vos visualisations. Power BI propose plusieurs niveaux de filtrage :</p>
+                
+                <ul class="feature-list">
+                    <li><strong>Filtre sur ce visuel :</strong> les filtres ne s'appliqueront que sur le visuel sélectionné</li>
+                    <li><strong>Filtre dans cette page :</strong> les filtres s'appliqueront sur l'ensemble des éléments de la page</li>
+                    <li><strong>Filtre dans toutes les pages :</strong> les filtres s'appliqueront sur l'ensemble des éléments de toutes les pages</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <h4>Astuces</h4>
+                    <ul class="feature-list">
+                        <li>Un filtre est sélectionné dès lors qu'il passe à une autre couleur que blanc.</li>
+                        <li>Pour savoir quels filtres s'appliquent sur un visuel, sélectionnez-le et consultez le volet de filtres.</li>
+                        <li>Les filtres dans "Filtres dans toutes les pages" s'appliquent à tous les rapports.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="visuels">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h2>Comment utiliser un visuel</h2>
+            </div>
+
+            <div class="card">
+                <p>Les visuels sont au cœur de Power BI. Voici les principales fonctionnalités pour les exploiter efficacement :</p>
+
+                <div class="card-grid">
+                    <div>
+                        <h3><i class="fas fa-cogs"></i>Manipulation</h3>
+                        <ul class="feature-list">
+                            <li>Notion de hiérarchie</li>
+                            <li>Copier le visuel</li>
+                            <li>Visualiser les filtres</li>
+                            <li>Agrandir le visuel</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-share-alt"></i>Partage et export</h3>
+                        <ul class="feature-list">
+                            <li>Partager</li>
+                            <li>Commenter</li>
+                            <li>Afficher sous forme de table</li>
+                            <li>Exporter</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="interactions">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-mouse-pointer"></i>
+                </div>
+                <h2>Interactions entre visuels</h2>
+            </div>
+
+            <div class="card">
+                <p>Les visuels dans Power BI peuvent interagir entre eux automatiquement. Cette fonctionnalité permet une exploration intuitive des données.</p>
+
+                <div class="card-grid">
+                    <div>
+                        <h3><i class="fas fa-filter"></i>Filtrage croisé</h3>
+                        <ul class="feature-list">
+                            <li>Cliquer sur un élément d'un graphique filtre automatiquement les autres visuels</li>
+                            <li>Maintenir Ctrl pour sélectionner plusieurs éléments</li>
+                            <li>Double-clic pour isoler un élément</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-eye"></i>Survol et détails</h3>
+                        <ul class="feature-list">
+                            <li>Survoler un point pour voir les détails</li>
+                            <li>Les autres visuels se mettent en surbrillance</li>
+                            <li>Clic droit pour plus d'options</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>Conseil pratique</h4>
+                    <p>Utilisez les interactions pour explorer vos données de manière intuitive. Cliquez sur différents éléments pour voir comment ils impactent l'ensemble de votre analyse.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="signets">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <h2>Pourquoi et comment utiliser un signet ?</h2>
+            </div>
+
+            <div class="card">
+                <p>Si vous reproduisez les mêmes filtres régulièrement, le bon réflexe est de créer un signet.</p>
+                <p>Les signets permettent de sauvegarder un état spécifique de votre rapport, incluant les filtres appliqués.</p>
+
+                <ol class="steps">
+                    <li><strong>Étape 1</strong> - Je sélectionne les filtres souhaités sur mon rapport</li>
+                    <li><strong>Étape 2</strong> - Je crée le signet en utilisant le menu "Affichage" puis "Signets" et "Ajouter"</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <h4>Avantages des signets</h4>
+                    <ul class="feature-list">
+                        <li>Gain de temps considérable</li>
+                        <li>Reproductibilité des analyses</li>
+                        <li>Partage de vues spécifiques avec collègues</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="export">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h2>Export et partage</h2>
+            </div>
+
+            <div class="card">
+                <p>Power BI offre plusieurs options pour exporter et partager vos données et visualisations.</p>
+
+                <div class="card-grid">
+                    <div>
+                        <h3><i class="fas fa-file-excel"></i>Export vers Excel</h3>
+                        <ul class="feature-list">
+                            <li>Clic droit sur un visuel → "Exporter les données"</li>
+                            <li>Choisir "Données résumées" ou "Données sous-jacentes"</li>
+                            <li>Téléchargement automatique du fichier Excel</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3><i class="fas fa-expand"></i>Mode plein écran</h3>
+                        <ul class="feature-list">
+                            <li>Cliquer sur l'icône "Focus" d'un visuel</li>
+                            <li>Utiliser F11 pour le mode plein écran</li>
+                            <li>Parfait pour les présentations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>Partage sécurisé</h4>
+                    <p>Utilisez les fonctionnalités de partage intégrées à Power BI plutôt que les captures d'écran pour maintenir la sécurité des données.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="commentaires">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h2>Commentaires collaboratifs</h2>
+            </div>
+
+            <div class="card">
+                <p>Les commentaires permettent de collaborer directement sur les dashboards et rapports.</p>
+
+                <ol class="steps">
+                    <li><strong>Ajouter un commentaire</strong> - Cliquez sur l'icône "Commentaire" en haut du rapport</li>
+                    <li><strong>Mentionner un collègue</strong> - Utilisez @ suivi du nom pour notifier quelqu'un</li>
+                    <li><strong>Répondre</strong> - Cliquez sur "Répondre" pour continuer une discussion</li>
+                    <li><strong>Résoudre</strong> - Marquez les commentaires comme résolus une fois traités</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <h4>Bonnes pratiques</h4>
+                    <ul class="feature-list">
+                        <li>Soyez précis dans vos commentaires</li>
+                        <li>Mentionnez les personnes concernées</li>
+                        <li>Résolvez les commentaires traités</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="alertes">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h2>Alertes de données</h2>
+            </div>
+
+            <div class="card">
+                <p>Configurez des alertes pour être notifié automatiquement lorsque vos données atteignent certains seuils.</p>
+
+                <div class="highlight-box">
+                    <h4>Prérequis</h4>
+                    <p>Les alertes ne sont disponibles que sur les vignettes de dashboard avec des jauges, KPI et cartes.</p>
+                </div>
+
+                <ol class="steps">
+                    <li><strong>Sélectionner la vignette</strong> - Cliquez sur la vignette concernée</li>
+                    <li><strong>Accéder aux alertes</strong> - Menu "..." → "Gérer les alertes"</li>
+                    <li><strong>Configurer le seuil</strong> - Définissez la valeur qui déclenche l'alerte</li>
+                    <li><strong>Choisir la fréquence</strong> - Hourly, Daily, ou lors du changement</li>
+                </ol>
+
+                <div class="highlight-box">
+                    <h4>Cas d'usage</h4>
+                    <ul class="feature-list">
+                        <li>Suivi des volumes de souscription / installation</li>
+                        <li>Monitoring des KPI importants</li>
+                        <li>Détection d'anomalies</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="reporting">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-file-powerpoint"></i>
+                </div>
+                <h2>Comment créer son reporting en PPT</h2>
+            </div>
+
+            <div class="card">
+                <p>Vous pouvez intégrer facilement vos rapports Power BI dans PowerPoint pour vos présentations.</p>
+                
+                <div class="highlight-box">
+                    <h4>Prérequis</h4>
+                    <p>Il est nécessaire d'installer un complément dans PowerPoint pour intégrer vos visualisations Power BI.</p>
+                </div>
+
+                <ol class="steps">
+                    <li>Ouvrez PowerPoint et allez dans l'onglet "Insertion"</li>
+                    <li>Sélectionnez "Mes compléments" ou "Obtenir des compléments"</li>
+                    <li>Recherchez "Power BI" et installez le complément officiel</li>
+                    <li>Utilisez le complément pour insérer vos rapports Power BI dans vos diapositives</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="abonnements">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h2>S'abonner aux dashboards</h2>
+            </div>
+
+            <div class="card">
+                <p>Il est possible de recevoir par mail les dashboards après la mise à jour de manière automatique.</p>
+                
+                <div class="highlight-box">
+                    <h4>Attention</h4>
+                    <p>L'abonnement n'est disponible que pour les collaborateurs avec licence Power BI.</p>
+                </div>
+
+                <ol class="steps">
+                    <li>Ouvrez le dashboard auquel vous souhaitez vous abonner</li>
+                    <li>Cliquez sur les trois points "..." en haut à droite</li>
+                    <li>Sélectionnez "S'abonner" ou "Abonnement"</li>
+                    <li>Configurez la fréquence et les détails de votre abonnement</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="ressources">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2>Pour aller plus loin</h2>
+            </div>
+
+            <div class="card">
+                <p>Pour approfondir vos connaissances sur Power BI, voici quelques ressources utiles :</p>
+                
+                <a href="https://learn.microsoft.com/fr-fr/power-bi/consumer/end-user-reading-view" class="resource-link" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    Documentation Microsoft Power BI
+                </a>
+                
+                <div class="resource-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    Orange Learning - Formations Power BI
+                </div>
+
+                <div class="highlight-box">
+                    <h4>Conseil</h4>
+                    <p>La pratique régulière est la clé pour maîtriser Power BI. N'hésitez pas à explorer les différentes fonctionnalités sur vos propres données.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Atelier Power BI - Formation - 2023</p>
+    </footer>
+
+    <script>
+        // Navigation active state
+        const navLinks = document.querySelectorAll('.nav-item a');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                navLinks.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Scroll animations
+        const sections = document.querySelectorAll('section');
+        
+        function checkSections() {
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (sectionTop < windowHeight * 0.75) {
+                    section.classList.add('visible');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkSections);
+        window.addEventListener('load', checkSections);
+
+        // Update active navigation on scroll
+        window.addEventListener('scroll', function() {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (pageYOffset >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Set current date dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDate = document.getElementById('current-date');
+            const today = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            currentDate.textContent = today.toLocaleDateString('fr-FR', options);
+            
+            // No additional JavaScript needed for the arrow indicator
+        });
+    </script>
+</body>
+</html>
