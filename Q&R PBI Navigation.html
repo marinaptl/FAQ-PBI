@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&R Power BI Navigation - Télésurveillance PTL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .results-count {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .qa-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .qa-item {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid #3498db;
+        }
+
+        .qa-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .qa-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .qa-question {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .qa-answer {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .location-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .location-title {
+            font-weight: 600;
+            color: #28a745;
+            margin-bottom: 0.5rem;
+        }
+
+        .location-details {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .dashboard-path {
+            display: inline-block;
+            margin: 0.2rem 0.5rem 0.2rem 0;
+            padding: 0.2rem 0.6rem;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .differences {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .differences-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .qa-dashboards {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .dashboard-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8f9fa;
+            color: #3498db;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .dashboard-link:hover {
+            background: #3498db;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+            
+            .filter-btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧭 Q&R Power BI Navigation - Télésurveillance</h1>
+        <p>Guide pratique : OÙ TROUVER chaque indicateur dans vos dashboards</p>
+    </div>
+
+    <div class="container">
+        <div class="stats-bar">
+            <h3>📊 20 Dashboards analysés | 🎯 200+ Indicateurs mappés | 📍 Navigation précise</h3>
+        </div>
+
+        <div class="search-section">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un indicateur : délai, taux, KPI, alarme...">
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">Tout</button>
+                <button class="filter-btn" data-category="sav">SAV</button>
+                <button class="filter-btn" data-category="installation">Installation</button>
+                <button class="filter-btn" data-category="planification">Planification</button>
+                <button class="filter-btn" data-category="kpi">KPI</button>
+                <button class="filter-btn" data-category="alarme">Alarmes</button>
+                <button class="filter-btn" data-category="client">Client</button>
+                <button class="filter-btn" data-category="commercial">Commercial</button>
+            </div>
+            
+            <div class="results-count" id="resultsCount">100+ résultats trouvés</div>
+        </div>
+
+        <div class="qa-grid" id="qaGrid">
+            <!-- SAV - Délais de traitement -->
+            <div class="qa-item" data-category="sav" data-keywords="délai traitement sav temps résolution durée moyenne">
+                <div class="qa-category">SAV</div>
+                <div class="qa-question">Où trouver les délais de traitement SAV ?</div>
+                <div class="qa-answer">
+                    Les délais SAV sont disponibles dans plusieurs sections du Dashboard SAV avec différents niveaux de détail.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard SAV :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "Flash KPI" → "Délai traitement SAV" (global)<br>
+                        <span class="dashboard-path">Page 4-5</span> → "Délai entre ouverture SAV et RDV"<br>
+                        <span class="dashboard-path">Page 1</span> → "Durée moyenne SAV" (00:30)<br>
+                        <span class="dashboard-path">Page 6-8</span> → Délais par type de matériel
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par matériel :</div>
+                    • <strong>BOX_V2</strong> : Délai le plus court<br>
+                    • <strong>BOXGR/BOXOS</strong> : Délais plus longs<br>
+                    • <strong>Accessoires</strong> : Délais variables selon type
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV</a>
+                </div>
+            </div>
+
+            <!-- SAV - Taux par matériel -->
+            <div class="qa-item" data-category="sav" data-keywords="taux sav matériel équipement dm dmi sonde clavier centrale badge">
+                <div class="qa-category">SAV</div>
+                <div class="qa-question">Où trouver les taux SAV par matériel ?</div>
+                <div class="qa-answer">
+                    Les taux SAV détaillés par équipement sont dans la section matériel du Dashboard SAV.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard SAV :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 6-8</span> → "Taux SAV par matériel"<br>
+                        • Taux DM (Détecteur Mouvement) : 20,34%<br>
+                        • Taux sonde : 13,10%<br>
+                        • Taux bloc : 10,44%<br>
+                        • Taux DO (Détecteur Ouverture) : 7,39%<br>
+                        • Taux clavier : 6,28%<br>
+                        • Taux centrale : 2,32%<br>
+                        • Taux badge : 1,10%
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Hiérarchie des taux :</div>
+                    • <strong>DM</strong> : Taux le plus élevé (20,34%)<br>
+                    • <strong>Sonde</strong> : Deuxième plus élevé (13,10%)<br>
+                    • <strong>Badge/SIM</strong> : Taux les plus bas (&lt;2%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV > Matériel</a>
+                </div>
+            </div>
+
+            <!-- SAV - Motifs d'intervention -->
+            <div class="qa-item" data-category="sav" data-keywords="motifs intervention déclenchement fixation absence détection casse">
+                <div class="qa-category">SAV</div>
+                <div class="qa-question">Où trouver les motifs d'intervention SAV ?</div>
+                <div class="qa-answer">
+                    Les motifs d'intervention sont détaillés dans la section analyse des causes du Dashboard SAV.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard SAV :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2-3</span> → "Motifs interventions"<br>
+                        • Déclenchement : 17,31%<br>
+                        • Absence détection : 7,30%<br>
+                        • Pb de fixation : 6,73%<br>
+                        • Casse : 1,62%
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Ordre d'importance :</div>
+                    • <strong>Déclenchement</strong> : Motif principal (17,31%)<br>
+                    • <strong>Détection</strong> : Problème technique (7,30%)<br>
+                    • <strong>Fixation</strong> : Problème installation (6,73%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV > Motifs</a>
+                </div>
+            </div>
+
+            <!-- SAV - Partenaires -->
+            <div class="qa-item" data-category="sav" data-keywords="partenaires sav planif team airria eli services ok service orange oti protectline">
+                <div class="qa-category">SAV</div>
+                <div class="qa-question">Où trouver la performance des partenaires SAV ?</div>
+                <div class="qa-answer">
+                    La performance des partenaires SAV est disponible dans la section partenaires du Dashboard SAV.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard SAV :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 7-8</span> → "Partenaires SAV"<br>
+                        • PLANIF_TEAM : partenaire principal<br>
+                        • AIRRIA : partenaire technique<br>
+                        • Eli Services : partenaire régional<br>
+                        • OK_SERVICE : partenaire spécialisé<br>
+                        • ORANGE : partenaire interne<br>
+                        • OTI FRANCE : partenaire externe<br>
+                        • Protectline : partenaire historique
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par partenaire :</div>
+                    • <strong>PLANIF_TEAM</strong> : Volume principal<br>
+                    • <strong>Eli Services</strong> : Spécialisation régionale<br>
+                    • <strong>OK_SERVICE</strong> : Performance technique
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV > Partenaires</a>
+                </div>
+            </div>
+
+            <!-- CRC - KPI Appels -->
+            <div class="qa-item" data-category="client" data-keywords="appels entrants perdus qualité service qs temps moyen traitement attente">
+                <div class="qa-category">CRC</div>
+                <div class="qa-question">Où trouver les KPI d'appels CRC ?</div>
+                <div class="qa-answer">
+                    Les KPI d'appels CRC sont centralisés dans la section Flash KPI du Dashboard CRC.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard CRC :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "Flash KPI"<br>
+                        • Appels Entrants (&gt;10 sec) : 281 355<br>
+                        • Appels Perdus (&gt;10 sec) : 24 639<br>
+                        • Qualité de Service (QS) : 91,24%<br>
+                        • Temps Moyen Traitement : 06:29<br>
+                        • Temps Moyen Attente : 00:53
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par groupe :</div>
+                    • <strong>CRC MASS MARKET</strong> : QS 94,76%<br>
+                    • <strong>HOTLINE SUR MESURE</strong> : QS 96,35%<br>
+                    • <strong>SERVICE CLIENT</strong> : QS 94,29%
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard CRC</a>
+                </div>
+            </div>
+
+            <!-- CRC - Motifs d'appels -->
+            <div class="qa-item" data-category="client" data-keywords="motifs appels problème technique injoignable administratif résiliation caméra facturation">
+                <div class="qa-category">CRC</div>
+                <div class="qa-question">Où trouver les motifs d'appels détaillés ?</div>
+                <div class="qa-answer">
+                    Les motifs d'appels sont analysés dans la section détaillée du Dashboard CRC.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard CRC :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2-3</span> → "Motifs d'appels"<br>
+                        • Problème technique : 55 680<br>
+                        • Injoignable/répond pas : 47 085<br>
+                        • Résiliation : 30 393<br>
+                        • Administratif : 27 279<br>
+                        • Caméra intérieure : 19 000<br>
+                        • Demande d'information : 11 338<br>
+                        • Doublon : 10 256<br>
+                        • Facturation/impayé : 9 961<br>
+                        • Défaut pile : 8 667
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Hiérarchie des motifs :</div>
+                    • <strong>Technique</strong> : Motif principal (55 680)<br>
+                    • <strong>Injoignable</strong> : Problème contact (47 085)<br>
+                    • <strong>Résiliation</strong> : Motif commercial (30 393)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard CRC > Motifs</a>
+                </div>
+            </div>
+
+            <!-- CRC - NAP -->
+            <div class="qa-item" data-category="client" data-keywords="nap nombre appels portefeuille groupama orange sur mesure tap tsb">
+                <div class="qa-category">CRC</div>
+                <div class="qa-question">Où trouver le NAP (Nombre d'appels sur Portefeuille) ?</div>
+                <div class="qa-answer">
+                    Le NAP est détaillé par marque dans la section analyse du Dashboard CRC.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard CRC :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 3-4</span> → "NAP par marque"<br>
+                        • NAP Groupama : variable selon période<br>
+                        • NAP Orange : variable selon période<br>
+                        • NAP Sur Mesure : variable selon période<br>
+                        • NAP TAP : variable selon période<br>
+                        • NAP TSB : variable selon période
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par marque :</div>
+                    • <strong>Groupama</strong> : Portefeuille habitat<br>
+                    • <strong>Orange</strong> : Portefeuille sécurité<br>
+                    • <strong>Sur Mesure</strong> : Portefeuille spécialisé
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard CRC > NAP</a>
+                </div>
+            </div>
+
+            <!-- Installation - Délais -->
+            <div class="qa-item" data-category="installation" data-keywords="délai installation prévisionnel teamtool weekly distribution">
+                <div class="qa-category">Installation</div>
+                <div class="qa-question">Où trouver les délais d'installation ?</div>
+                <div class="qa-answer">
+                    Les délais d'installation sont disponibles dans 3 sources avec des objectifs différents.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Emplacements :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Teamtool</span> → Section "Flash KPI" → "Délai d'installation"<br>
+                        <span class="dashboard-path">Weekly Mass Market</span> → Page 1 → "Délai moyen : 17,66 jours"<br>
+                        <span class="dashboard-path">Dashboard Distribution</span> → Section "Délai Souscription-Installation : 21,04 jours"<br>
+                        <span class="dashboard-path">Délai prévisionnel install</span> → "Délai prévisionnel : 28,59 jours"
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences importantes :</div>
+                    • <strong>Teamtool</strong> : Délai technique réel<br>
+                    • <strong>Weekly</strong> : Délai moyen global (17,66j)<br>
+                    • <strong>Distribution</strong> : Délai commercial (21,04j)<br>
+                    • <strong>Prévisionnel</strong> : Délai objectif (28,59j)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool</a>
+                    <a href="#" class="dashboard-link">📊 Weekly Mass Market</a>
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution</a>
+                    <a href="#" class="dashboard-link">⏰ Délai prévisionnel</a>
+                </div>
+            </div>
+
+            <!-- Taux SAV -->
+            <div class="qa-item" data-category="sav" data-keywords="taux sav motif matériel délai traitement">
+                <div class="qa-category">SAV</div>
+                <div class="qa-question">Où trouver les taux de SAV et motifs ?</div>
+                <div class="qa-answer">
+                    Les données SAV sont centralisées dans le Dashboard SAV avec plusieurs vues selon votre besoin.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Navigation Dashboard SAV :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "Flash KPI" → Taux SAV global<br>
+                        <span class="dashboard-path">Page 2-3</span> → "Motifs SAV" → Répartition par cause<br>
+                        <span class="dashboard-path">Page 4-5</span> → "Délai traitement" → Temps de résolution<br>
+                        <span class="dashboard-path">Page 6-8</span> → "Matériel" → Taux par équipement
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par matériel :</div>
+                    • <strong>BOX_V2</strong> : Délai le plus court<br>
+                    • <strong>BOXGR/BOXOS</strong> : Délais plus longs<br>
+                    • <strong>Accessoires</strong> : Taux SAV variables
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV</a>
+                </div>
+            </div>
+
+            <!-- Taux de Planification -->
+            <div class="qa-item" data-category="planification" data-keywords="taux planification prdv digitalisation rdv">
+                <div class="qa-category">Planification</div>
+                <div class="qa-question">Où trouver les taux de planification et PRDV ?</div>
+                <div class="qa-answer">
+                    Les taux de planification sont dans plusieurs dashboards avec des angles différents.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Sources principales :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Planification Teamtool</span> → Page 1 → "Flash KPI" → Taux PRDV<br>
+                        <span class="dashboard-path">Appel Planification</span> → Section "KPI Appels" → Performance RDV<br>
+                        <span class="dashboard-path">Digitalisation</span> → Page 1 → "Taux digitalisation"
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'approche :</div>
+                    • <strong>Teamtool</strong> : Vision technique des planifications<br>
+                    • <strong>Appel Planif</strong> : Vision centre d'appels<br>
+                    • <strong>Digitalisation</strong> : Focus sur l'adoption digitale
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool</a>
+                    <a href="#" class="dashboard-link">📞 Appel Planification</a>
+                    <a href="#" class="dashboard-link">💻 Digitalisation</a>
+                </div>
+            </div>
+
+            <!-- KPI Qualité de Service -->
+            <div class="qa-item" data-category="kpi" data-keywords="qualité service qs appels crc sav">
+                <div class="qa-category">KPI</div>
+                <div class="qa-question">Où trouver les KPI de Qualité de Service (QS) ?</div>
+                <div class="qa-answer">
+                    Les KPI QS sont répartis dans 3 dashboards selon le type d'appel.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Répartition par type :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Dashboard CRC</span> → Section "Flash KPI" → QS général<br>
+                        <span class="dashboard-path">Dashboard SAV</span> → Section "Flash KPI" → QS technique<br>
+                        <span class="dashboard-path">Appel Planification</span> → Section "Flash KPI" → QS RDV
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par activité :</div>
+                    • <strong>CRC</strong> : Appels généraux et réclamations<br>
+                    • <strong>SAV</strong> : Support technique uniquement<br>
+                    • <strong>Planification</strong> : Prise de RDV uniquement
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🎯 Dashboard CRC</a>
+                    <a href="#" class="dashboard-link">🎯 Dashboard SAV</a>
+                    <a href="#" class="dashboard-link">📞 Appel Planification</a>
+                </div>
+            </div>
+
+            <!-- Alarmes -->
+            <div class="qa-item" data-category="alarme" data-keywords="alarme télésurveillance déclenchement contrat">
+                <div class="qa-category">Alarmes</div>
+                <div class="qa-question">Où trouver les données d'alarmes ?</div>
+                <div class="qa-answer">
+                    Les alarmes sont suivies dans 2 dashboards avec des vues complémentaires.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Sources spécialisées :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Dashboard Alarme</span> → Section principale → Nombre d'alarmes<br>
+                        <span class="dashboard-path">KPI Télésurveillance</span> → Section "Historique" → Contrats déclencheurs
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'analyse :</div>
+                    • <strong>Dashboard Alarme</strong> : Vue opérationnelle temps réel<br>
+                    • <strong>KPI Télésurveillance</strong> : Analyse historique et tendances
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🚨 Dashboard Alarme</a>
+                    <a href="#" class="dashboard-link">📡 KPI Télésurveillance</a>
+                </div>
+            </div>
+
+            <!-- Portefeuille/Stock -->
+            <div class="qa-item" data-category="commercial" data-keywords="portefeuille stock commande souscription">
+                <div class="qa-category">Commercial</div>
+                <div class="qa-question">Où trouver le portefeuille et stock de commandes ?</div>
+                <div class="qa-answer">
+                    Le portefeuille est suivi dans 2 dashboards avec des périmètres différents.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Vues disponibles :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Dashboard Distribution</span> → Section "Activités quotidiennes" → Stock<br>
+                        <span class="dashboard-path">Comité Opérationnel</span> → Section "Portefeuille TSB" → Vue globale
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences de périmètre :</div>
+                    • <strong>Distribution</strong> : Focus distributeurs et régions<br>
+                    • <strong>Comité Opérationnel</strong> : Vision nationale consolidée
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution</a>
+                    <a href="#" class="dashboard-link">📊 Comité Opérationnel</a>
+                </div>
+            </div>
+
+            <!-- Interventions -->
+            <div class="qa-item" data-category="kpi" data-keywords="intervention activeille ttmm di demande">
+                <div class="qa-category">Interventions</div>
+                <div class="qa-question">Où trouver les interventions et demandes ?</div>
+                <div class="qa-answer">
+                    Les interventions sont suivies dans 2 dashboards selon le type d'activité.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboards spécialisés :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Dashboard Activeille TTMM</span> → Section "Statut interventions"<br>
+                        <span class="dashboard-path">Dashboard DI</span> → Section "Flash KPI" → Demandes intervention
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'approche :</div>
+                    • <strong>Activeille TTMM</strong> : Interventions techniques opérationnelles<br>
+                    • <strong>DI</strong> : Demandes et workflow de traitement
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">⚡ Dashboard Activeille TTMM</a>
+                    <a href="#" class="dashboard-link">🔧 Dashboard DI</a>
+                </div>
+            </div>
+
+            <!-- Fiche Client -->
+            <div class="qa-item" data-category="client" data-keywords="fiche client contrat recherche historique">
+                <div class="qa-category">Client</div>
+                <div class="qa-question">Où consulter la fiche complète d'un client ?</div>
+                <div class="qa-answer">
+                    La fiche client est accessible via 2 dashboards avec des informations complémentaires.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Accès aux fiches :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Fiche Client</span> → Recherche par nom/contrat → Historique complet<br>
+                        <span class="dashboard-path">Dashboard Traces V2</span> → Section "Recherche" → Interactions
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'information :</div>
+                    • <strong>Fiche Client</strong> : Données contractuelles et équipements<br>
+                    • <strong>Traces V2</strong> : Historique appels et interactions
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">👤 Fiche Client</a>
+                    <a href="#" class="dashboard-link">🔍 Dashboard Traces V2</a>
+                </div>
+            </div>
+
+            <!-- Taux de Conversion -->
+            <div class="qa-item" data-category="commercial" data-keywords="taux conversion funnel abandon parc installé">
+                <div class="qa-category">Commercial</div>
+                <div class="qa-question">Où trouver le funnel de conversion complet ?</div>
+                <div class="qa-answer">
+                    Le funnel de conversion est disponible dans 2 dashboards avec des détails différents.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Vues du funnel :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Weekly Mass Market</span> → Page 1 → "Funnel conversion"<br>
+                        <span class="dashboard-path">KPI PTL</span> → Section "Conversion" → Détails par étape
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'analyse :</div>
+                    • <strong>Weekly</strong> : Vision hebdomadaire avec évolution<br>
+                    • <strong>KPI PTL</strong> : Analyse détaillée des abandons
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📈 Weekly Mass Market</a>
+                    <a href="#" class="dashboard-link">🎯 KPI PTL</a>
+                </div>
+            </div>
+
+            <!-- Performance Régionale -->
+            <div class="qa-item" data-category="commercial" data-keywords="région do caisse performance géographique">
+                <div class="qa-category">Commercial</div>
+                <div class="qa-question">Où trouver la performance par région ?</div>
+                <div class="qa-answer">
+                    Les performances régionales sont dans 2 dashboards avec des angles différents.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Vues régionales :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Weekly Mass Market</span> → Page 3 → "Performance DO/Caisse"<br>
+                        • Sud Ouest : 30 482<br>
+                        • Ouest : 26 106<br>
+                        • Sud Est : 24 207<br>
+                        • Grand Est : 22 235<br>
+                        • Normandie : 21 364<br>
+                        <span class="dashboard-path">Dashboard Distribution</span> → Multiple pages → Détail par région
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences de granularité :</div>
+                    • <strong>Weekly</strong> : Synthèse hebdomadaire par DO<br>
+                    • <strong>Distribution</strong> : Détail par distributeur et ville
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📊 Weekly Mass Market</a>
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution</a>
+                </div>
+            </div>
+
+            <!-- Distribution - KPI Portefeuille -->
+            <div class="qa-item" data-category="commercial" data-keywords="portefeuille souscriptions installations annulations stock évolution">
+                <div class="qa-category">Distribution</div>
+                <div class="qa-question">Où trouver les KPI de portefeuille et stock ?</div>
+                <div class="qa-answer">
+                    Les KPI de portefeuille sont centralisés dans le Dashboard Distribution avec détail par activité.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Distribution :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI Portefeuille"<br>
+                        • Nombre de Souscriptions : 88 988<br>
+                        • Nombre d'Installations : 50 366<br>
+                        • Nombre d'Annulations : 64 559<br>
+                        • Stock : 8 104<br>
+                        • Évolution Portefeuille : 24 429<br>
+                        • Portefeuille total : 157 722<br>
+                        • Portefeuille Actif : 149 120
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par statut :</div>
+                    • <strong>Souscriptions</strong> : Nouvelles commandes<br>
+                    • <strong>Installations</strong> : Équipements posés<br>
+                    • <strong>Stock</strong> : En attente traitement
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution</a>
+                </div>
+            </div>
+
+            <!-- Distribution - Taux et Délais -->
+            <div class="qa-item" data-category="commercial" data-keywords="taux annulation stock installation délai souscription churn">
+                <div class="qa-category">Distribution</div>
+                <div class="qa-question">Où trouver les taux et délais distribution ?</div>
+                <div class="qa-answer">
+                    Les taux et délais distribution sont dans la section analyse du Dashboard Distribution.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Distribution :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2-3</span> → "Taux et Délais"<br>
+                        • Taux d'annulation : 41,07%<br>
+                        • Taux de Stock : 9,11%<br>
+                        • Délai Souscription-Installation : 21,04 jours<br>
+                        • Délai moyen installation : 19,25 jours<br>
+                        • Délai moyen annulation : 15,95 mois<br>
+                        • Churn global : 4,88%<br>
+                        • Churn sans impayés : 4,48%
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences de calcul :</div>
+                    • <strong>Churn global</strong> : Inclut tous les motifs<br>
+                    • <strong>Churn sans impayés</strong> : Exclut les impayés<br>
+                    • <strong>Délai installation</strong> : Moyenne opérationnelle
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution > Taux</a>
+                </div>
+            </div>
+
+            <!-- Distribution - Répartition par produit -->
+            <div class="qa-item" data-category="commercial" data-keywords="répartition produit activeille box orange sécurité groupama habitat">
+                <div class="qa-category">Distribution</div>
+                <div class="qa-question">Où trouver la répartition par produit ?</div>
+                <div class="qa-answer">
+                    La répartition par produit est détaillée dans la section produits du Dashboard Distribution.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Distribution :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 4-5</span> → "Répartition par produit"<br>
+                        • Box Orange Securite V2 : 67 147 contrats actifs<br>
+                        • Groupama BOX Habitat V2 : 33 027 contrats actifs<br>
+                        • BOX Orange Sécurité : 16 175 contrats actifs<br>
+                        • Activeille Standard : 9 098 contrats actifs
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par gamme :</div>
+                    • <strong>Box Orange V2</strong> : Gamme principale (67 147)<br>
+                    • <strong>Groupama V2</strong> : Gamme partenaire (33 027)<br>
+                    • <strong>Activeille</strong> : Gamme professionnelle (9 098)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🌍 Dashboard Distribution > Produits</a>
+                </div>
+            </div>
+
+            <!-- Weekly Mass Market - Tunnel de conversion -->
+            <div class="qa-item" data-category="commercial" data-keywords="tunnel conversion commandes traitement planification installation parc">
+                <div class="qa-category">Commercial</div>
+                <div class="qa-question">Où trouver le tunnel de conversion complet ?</div>
+                <div class="qa-answer">
+                    Le tunnel de conversion est détaillé dans la page 1 du Weekly Mass Market avec tous les taux.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Weekly Mass Market :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "Tunnel de conversion"<br>
+                        • Commandes : 212 411<br>
+                        • Commandes traitées : 212 411 (100%)<br>
+                        • RDV planifié/confirmé : 176 383 (83%)<br>
+                        • Installé : 114 621 (54% sur commande)<br>
+                        • Installation sur planification : 65%<br>
+                        • Parc : 84 991 (74%)<br>
+                        • Résiliation : 29 630
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences de calcul :</div>
+                    • <strong>Taux sur commande</strong> : 54% installation<br>
+                    • <strong>Taux sur planification</strong> : 65% installation<br>
+                    • <strong>Taux parc</strong> : 74% maintien
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📊 Weekly Mass Market > Tunnel</a>
+                </div>
+            </div>
+
+            <!-- Weekly Mass Market - Répartition par pack -->
+            <div class="qa-item" data-category="commercial" data-keywords="répartition pack formule maison appartement">
+                <div class="qa-category">Commercial</div>
+                <div class="qa-question">Où trouver la répartition par pack/formule ?</div>
+                <div class="qa-answer">
+                    La répartition par pack est dans la section analyse du Weekly Mass Market.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Weekly Mass Market :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2</span> → "Répartition par pack"<br>
+                        • Formule maison : 155 026 (72,98%)<br>
+                        • Formule appartement : 57 385 (27,02%)
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par formule :</div>
+                    • <strong>Maison</strong> : Formule majoritaire (72,98%)<br>
+                    • <strong>Appartement</strong> : Formule complémentaire (27,02%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📊 Weekly Mass Market > Packs</a>
+                </div>
+            </div>
+
+            <!-- Planification - Flash KPI (PAGE 2) -->
+            <div class="qa-item" data-category="planification" data-keywords="flash kpi taux ok nok report planification teamtool">
+                <div class="qa-category">Planification</div>
+                <div class="qa-question">Où trouver les Flash KPI de planification ?</div>
+                <div class="qa-answer">
+                    Les Flash KPI de planification sont centralisés dans la PAGE 2 du Planification Teamtool avec 31 visuels.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 2 "Flash KPI" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Interventions</span> → `nb_interventions` (nombre total)<br>
+                        <span class="dashboard-path">Planifications</span> → `nb_planification_replanification_date_action`<br>
+                        <span class="dashboard-path">Taux OK</span> → `taux_ok_date_histo` (par offre)<br>
+                        <span class="dashboard-path">Taux NOK</span> → `taux_nok_date_histo` (par offre)<br>
+                        <span class="dashboard-path">Report Tech</span> → `taux_report_tech_date_histo`<br>
+                        <span class="dashboard-path">Report Client</span> → `taux_report_client_date_histo`<br>
+                        <span class="dashboard-path">SAV Garantie</span> → `nb_sav_garantie` (par partenaire)<br>
+                        <span class="dashboard-path">Hors Garantie</span> → `nb_ex_garantie` (par partenaire)
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par mesure :</div>
+                    • <strong>nb_interventions</strong> : Nombre total d'interventions<br>
+                    • <strong>taux_ok_date_histo</strong> : Taux réussite par offre<br>
+                    • <strong>taux_report_tech/client</strong> : Différenciation technique vs client
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 2</a>
+                </div>
+            </div>
+
+            <!-- Planification - Planification détaillée (PAGE 3) -->
+            <div class="qa-item" data-category="planification" data-keywords="planification détaillée délai contact rdv confirmer annulation">
+                <div class="qa-category">Planification</div>
+                <div class="qa-question">Où trouver les détails de planification avancés ?</div>
+                <div class="qa-answer">
+                    Les détails de planification sont dans la PAGE 3 avec 93 visuels et métriques avancées.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 3 "Planification" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">1er Contact</span> → `delai_1_contact_date_action` + `nb_1er_contact_date_action`<br>
+                        <span class="dashboard-path">1ère Planif</span> → `delai_1_planif_date_action` + `nb_1er_planification_date_action`<br>
+                        <span class="dashboard-path">RDV à venir</span> → `nb_rdv_a_venir_date_rdv`<br>
+                        <span class="dashboard-path">RDV à confirmer</span> → `nb_rdv_a_confirmer_date_prdv`<br>
+                        <span class="dashboard-path">Annulations</span> → `nb_inter_avec_annul_batch_j_4`<br>
+                        <span class="dashboard-path">Origine</span> → `origine_planif_replanif_lib`
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par étape :</div>
+                    • <strong>delai_1_contact</strong> : Délai premier contact client<br>
+                    • <strong>delai_1_planif</strong> : Délai première planification<br>
+                    • <strong>nb_rdv_a_venir</strong> : RDV programmés à venir<br>
+                    • <strong>nb_rdv_a_confirmer</strong> : RDV en attente confirmation
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 3</a>
+                </div>
+            </div>
+
+            <!-- Planification - Interventions (PAGE 4) -->
+            <div class="qa-item" data-category="planification" data-keywords="interventions historisées code 20 internalisation injoignable inéligible">
+                <div class="qa-category">Interventions</div>
+                <div class="qa-question">Où trouver les interventions et performances techniques ?</div>
+                <div class="qa-answer">
+                    Les interventions sont détaillées dans la PAGE 4 avec 123 visuels et métriques techniques.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 4 "Interventions" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Interventions historisées</span> → `nb_interventions_historisee_date_histo`<br>
+                        <span class="dashboard-path">Code 20</span> → `taux_code_20_date_histo` + `nb_code_20_date_histo`<br>
+                        <span class="dashboard-path">Internalisation</span> → `taux_internalisation`<br>
+                        <span class="dashboard-path">Injoignables</span> → `nb_injoignable_actuel_date_creation`<br>
+                        <span class="dashboard-path">Inéligibles</span> → `Taux_ineligible_date_histo` + `nb_ineligible_date_histo`<br>
+                        <span class="dashboard-path">Délai réalisation</span> → `delai_realisation_date_rdv`<br>
+                        <span class="dashboard-path">Délai prévisionnel</span> → `delai_previsionnel_realisation_date_rdv`<br>
+                        <span class="dashboard-path">Antériorité</span> → `anteriorite_inter_classe`
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par métrique :</div>
+                    • <strong>taux_code_20</strong> : Taux intervention réussie<br>
+                    • <strong>taux_internalisation</strong> : Part interne vs externe<br>
+                    • <strong>nb_injoignable</strong> : Clients non joignables<br>
+                    • <strong>anteriorite_inter_classe</strong> : Ancienneté intervention
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 4</a>
+                </div>
+            </div>
+
+            <!-- Planification - Suivi Partenaire (PAGE 5) -->
+            <div class="qa-item" data-category="planification" data-keywords="suivi partenaire garantie hors garantie internalisation technicien">
+                <div class="qa-category">Partenaires</div>
+                <div class="qa-question">Où trouver le suivi détaillé des partenaires ?</div>
+                <div class="qa-answer">
+                    Le suivi partenaire est dans la PAGE 5 avec 55 visuels et métriques partenaires.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 5 "Suivi Partenaire" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">SAV Garantie</span> → `nb_sav_garantie` (par partenaire)<br>
+                        <span class="dashboard-path">Hors Garantie</span> → `nb_ex_garantie` (par partenaire)<br>
+                        <span class="dashboard-path">Internalisation</span> → `taux_internalisation`<br>
+                        <span class="dashboard-path">Déclenchement</span> → `declanchement_garantie`<br>
+                        <span class="dashboard-path">Partenaire</span> → `tech_partenaire_nom`<br>
+                        <span class="dashboard-path">Code technicien</span> → `tech_code`<br>
+                        <span class="dashboard-path">Login technicien</span> → `PLANIF_TECHNICIEN_LOGIN`
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par type :</div>
+                    • <strong>nb_sav_garantie</strong> : Interventions sous garantie<br>
+                    • <strong>nb_ex_garantie</strong> : Interventions hors garantie<br>
+                    • <strong>tech_partenaire_nom</strong> : Nom du partenaire<br>
+                    • <strong>declanchement_garantie</strong> : Motif déclenchement
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 5</a>
+                </div>
+            </div>
+
+            <!-- Planification - Listing interventions (PAGE 6) -->
+            <div class="qa-item" data-category="planification" data-keywords="listing interventions détail contrat event cloture rdv technicien">
+                <div class="qa-category">Listings</div>
+                <div class="qa-question">Où trouver le listing détaillé des interventions ?</div>
+                <div class="qa-answer">
+                    Le listing des interventions est dans la PAGE 6 avec table complète et filtres.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 6 "Listing interventions" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Colonnes principales</span> :<br>
+                        • `CONTRAT_NUM_PARTENAIRE` : Numéro contrat<br>
+                        • `EVENT_NUM_PTL` : Numéro événement<br>
+                        • `EVENT_CLOTURE_CODE` + `EVENT_CLOTURE_LIB` : Code/libellé clôture<br>
+                        • `PLANIF_RDV_DATE_INTERVENTION` : Date RDV<br>
+                        • `PLANIF_TECHNICIEN_PARTENAIRE` : Partenaire<br>
+                        • `PLANIF_TECHNICIEN_LOGIN` : Login technicien<br>
+                        • `PLANIF_COMMENTAIRE_INTERNE_PLANIF` : Commentaire interne<br>
+                        • `PLANIF_TRAJET_DISTANCE` + `PLANIF_TRAJET_TEMPS` : Distance/temps
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par information :</div>
+                    • <strong>EVENT_CLOTURE_CODE</strong> : Code technique clôture<br>
+                    • <strong>EVENT_CLOTURE_LIB</strong> : Libellé lisible clôture<br>
+                    • <strong>PLANIF_TRAJET_*</strong> : Informations logistiques<br>
+                    • <strong>PLANIF_COMMENTAIRE_*</strong> : Commentaires techniques
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 6</a>
+                </div>
+            </div>
+
+            <!-- Planification - Interventions historisées (PAGE 7) -->
+            <div class="qa-item" data-category="planification" data-keywords="interventions historisées archivage cloture groupe historique">
+                <div class="qa-category">Historique</div>
+                <div class="qa-question">Où trouver les interventions historisées ?</div>
+                <div class="qa-answer">
+                    Les interventions historisées sont dans la PAGE 7 avec historique complet.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool > PAGE 7 "Listing interventions historisées" :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Colonnes historique</span> :<br>
+                        • `nb_interventions_historisee_date_histo` : Nombre historisé<br>
+                        • `groupe_cloture` : Groupe de clôture<br>
+                        • `PLANIF_ARCHIVING_DATE` : Date archivage<br>
+                        • `EVENT_CLOTURE_CODE` + `EVENT_CLOTURE_LIB` : Code clôture<br>
+                        • `PLANIF_RDV_DATE_INTERVENTION` : Date intervention<br>
+                        • `code_libele` : Code et libellé
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences vs interventions courantes :</div>
+                    • <strong>PLANIF_ARCHIVING_DATE</strong> : Date archivage spécifique<br>
+                    • <strong>groupe_cloture</strong> : Groupement des clôtures<br>
+                    • <strong>nb_interventions_historisee</strong> : Décompte historique<br>
+                    • <strong>code_libele</strong> : Code technique historique
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > PAGE 7</a>
+                </div>
+            </div>
+
+            <!-- Planification - Filtres avancés -->
+            <div class="qa-item" data-category="planification" data-keywords="filtres caisse do prdv departement offre event type partenaire">
+                <div class="qa-category">Filtrage</div>
+                <div class="qa-question">Quels filtres sont disponibles dans Planification Teamtool ?</div>
+                <div class="qa-answer">
+                    Tous les dashboards Teamtool ont des filtres avancés pour affiner l'analyse.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Filtres disponibles (toutes pages) :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Géographique</span> :<br>
+                        • `caisse_do` : Caisse/Direction Opérationnelle<br>
+                        • `SITE_DEPARTEMENT` : Département<br>
+                        <span class="dashboard-path">Commercial</span> :<br>
+                        • `Offre` : Type d'offre (BOX_V2, BOXOS_V2...)<br>
+                        • `PRDV_oui_non` : Prise RDV Oui/Non<br>
+                        <span class="dashboard-path">Technique</span> :<br>
+                        • `EVENT_TYPE_LIB` : Type d'événement<br>
+                        • `tech_partenaire_nom` : Nom partenaire<br>
+                        • `tech_code` : Code technicien<br>
+                        • `Date` : Période d'analyse
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par type de filtre :</div>
+                    • <strong>caisse_do</strong> : Filtre géographique principal<br>
+                    • <strong>PRDV_oui_non</strong> : Différenciation prise RDV<br>
+                    • <strong>EVENT_TYPE_LIB</strong> : Type événement lisible<br>
+                    • <strong>tech_partenaire_nom</strong> : Partenaire technique exact
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > Filtres</a>
+                </div>
+            </div>
+
+            <!-- Planification - Origine et Partenaires -->
+            <div class="qa-item" data-category="planification" data-keywords="origine planification client batch ptl partenaires garantie eli orange">
+                <div class="qa-category">Planification</div>
+                <div class="qa-question">Où trouver l'origine des planifications et partenaires ?</div>
+                <div class="qa-answer">
+                    L'origine des planifications et les partenaires sont détaillés dans la section analyse du Planification Teamtool.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Planification Teamtool :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 5-6</span> → "Origine planification"<br>
+                        • Planification client/batch : 74,83%<br>
+                        • Planification PTL : 25,17%<br>
+                        <span class="dashboard-path">Page 6-7</span> → "Partenaires SAV"<br>
+                        • Garantie : 174 262 SAV<br>
+                        • OK_SERVICE : 37 442 SAV<br>
+                        • Eli Services : 36 846 SAV<br>
+                        • ORANGE : 136 SAV
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences d'origine :</div>
+                    • <strong>Client/Batch</strong> : Planification automatique (74,83%)<br>
+                    • <strong>PTL</strong> : Planification manuelle (25,17%)<br>
+                    • <strong>Garantie</strong> : Partenaire principal SAV
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📅 Planification Teamtool > Origine</a>
+                </div>
+            </div>
+
+            <!-- Alarmes - Types et volumes -->
+            <div class="qa-item" data-category="alarme" data-keywords="types alarmes intrusion défaut supervision batterie boîtier fumée atc">
+                <div class="qa-category">Alarmes</div>
+                <div class="qa-question">Où trouver les types d'alarmes et volumes ?</div>
+                <div class="qa-answer">
+                    Les types d'alarmes et volumes sont détaillés dans la section principale du Dashboard Alarme.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Alarme :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "Types d'alarmes"<br>
+                        • Intrusion : 43 812 (29,57%)<br>
+                        • Défaut de supervision : 41 671 (28,12%)<br>
+                        • Défaut batterie : 27 628 (18,65%)<br>
+                        • Boîtier ouvert : 11 582 (7,82%)<br>
+                        • Fumée : 10 582 (7,14%)<br>
+                        • ATC : 9 955 (6,72%)<br>
+                        • Coupure secteur : 2 671 (1,8%)<br>
+                        • Total alarmes : 148 170
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par criticité :</div>
+                    • <strong>Intrusion/Fumée</strong> : Alertes prioritaires<br>
+                    • <strong>Défaut supervision</strong> : Problème technique<br>
+                    • <strong>Défaut batterie</strong> : Maintenance préventive
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🚨 Dashboard Alarme > Types</a>
+                </div>
+            </div>
+
+            <!-- Alarmes - Contrats déclencheurs -->
+            <div class="qa-item" data-category="alarme" data-keywords="contrats déclencheurs alarmes prise charge cts">
+                <div class="qa-category">Alarmes</div>
+                <div class="qa-question">Où trouver les contrats déclencheurs d'alarmes ?</div>
+                <div class="qa-answer">
+                    Les contrats déclencheurs sont analysés dans la section CTS du Dashboard Alarme.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Alarme :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2</span> → "Contrats déclencheurs"<br>
+                        • Nombre de contrats déclencheurs : 50 350<br>
+                        • Alarmes nécessitant prise en charge CTS : 37 577 (72,5%)<br>
+                        • État Active : alarmes en cours<br>
+                        • État Cleared : alarmes terminées
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par état :</div>
+                    • <strong>Active</strong> : Alarmes en cours de traitement<br>
+                    • <strong>Cleared</strong> : Alarmes résolues<br>
+                    • <strong>CTS</strong> : Nécessite intervention (72,5%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🚨 Dashboard Alarme > Contrats</a>
+                </div>
+            </div>
+
+            <!-- Activeille - Interventions -->
+            <div class="qa-item" data-category="kpi" data-keywords="interventions activeille événements planifiées terminée clôturée">
+                <div class="qa-category">Activeille</div>
+                <div class="qa-question">Où trouver les interventions Activeille ?</div>
+                <div class="qa-answer">
+                    Les interventions Activeille sont détaillées dans le Dashboard Activeille TTMM.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Activeille TTMM :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI Interventions"<br>
+                        • Nombre d'événements : 8 905<br>
+                        • Interventions planifiées : 260<br>
+                        • Terminée OK : 7,5K<br>
+                        • Clôturée : 0,9K<br>
+                        • Planifiée : 0,3K<br>
+                        • Terminée KO : 0,1K<br>
+                        • A planifier : 0,1K
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par statut :</div>
+                    • <strong>Terminée OK</strong> : Majoritaire (7,5K)<br>
+                    • <strong>Clôturée</strong> : Secondaire (0,9K)<br>
+                    • <strong>A planifier</strong> : Minoritaire (0,1K)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">⚡ Dashboard Activeille TTMM</a>
+                </div>
+            </div>
+
+            <!-- Activeille - Types d'intervention -->
+            <div class="qa-item" data-category="kpi" data-keywords="types intervention activeille sav entretien installation">
+                <div class="qa-category">Activeille</div>
+                <div class="qa-question">Où trouver les types d'intervention Activeille ?</div>
+                <div class="qa-answer">
+                    Les types d'intervention Activeille sont dans la section analyse du Dashboard Activeille TTMM.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Activeille TTMM :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2</span> → "Types d'intervention"<br>
+                        • Service Après-Vente Activeille : 79,05%<br>
+                        • Visite d'entretien Activeille : 20,08%<br>
+                        • Installation Activeille : minoritaire
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par type :</div>
+                    • <strong>SAV</strong> : Activité principale (79,05%)<br>
+                    • <strong>Entretien</strong> : Activité secondaire (20,08%)<br>
+                    • <strong>Installation</strong> : Activité ponctuelle
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">⚡ Dashboard Activeille TTMM > Types</a>
+                </div>
+            </div>
+
+            <!-- DI - Demandes d'intervention -->
+            <div class="qa-item" data-category="kpi" data-keywords="demandes intervention di stock traité ratio contrats">
+                <div class="qa-category">DI</div>
+                <div class="qa-question">Où trouver les demandes d'intervention (DI) ?</div>
+                <div class="qa-answer">
+                    Les demandes d'intervention sont centralisées dans le Dashboard DI avec KPI complets.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard DI :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI DI"<br>
+                        • Nombre DI : 49 (période donnée)<br>
+                        • Ratio DI/Contrats : 1,02<br>
+                        • Nombre DI Stock : 2 482<br>
+                        • Nombre DI Traité : variable<br>
+                        • Terminé : 49 (100%)<br>
+                        • A traiter : stock<br>
+                        • A confirmer : stock
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par statut :</div>
+                    • <strong>Terminé</strong> : Traitement finalisé<br>
+                    • <strong>A traiter</strong> : En attente<br>
+                    • <strong>A confirmer</strong> : Validation requise
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🔧 Dashboard DI</a>
+                </div>
+            </div>
+
+            <!-- Options matériels - KPI Options -->
+            <div class="qa-item" data-category="kpi" data-keywords="options matériels souscrites installées stock annulées caméra prise">
+                <div class="qa-category">Options</div>
+                <div class="qa-question">Où trouver les KPI des options matériels ?</div>
+                <div class="qa-answer">
+                    Les KPI des options matériels sont détaillés dans le Dashboard Options matériels.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Options matériels :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI Options"<br>
+                        • Nombre options souscrites : 122 981<br>
+                        • PTF options installées : 56 366<br>
+                        • Options en stock : 14 740 (11,99%)<br>
+                        • Options installées : 43 866 (35,67%)<br>
+                        • Options annulées : 64 375 (52,35%)<br>
+                        • Taux d'annulation global : 52,35%
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par statut :</div>
+                    • <strong>Annulées</strong> : Majoritaire (52,35%)<br>
+                    • <strong>Installées</strong> : Secondaire (35,67%)<br>
+                    • <strong>Stock</strong> : Minoritaire (11,99%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🛠️ Options matériels</a>
+                </div>
+            </div>
+
+            <!-- Options matériels - Types d'options -->
+            <div class="qa-item" data-category="kpi" data-keywords="types options caméra intérieure extérieure prise connectée">
+                <div class="qa-category">Options</div>
+                <div class="qa-question">Où trouver les types d'options matériels ?</div>
+                <div class="qa-answer">
+                    Les types d'options sont détaillés dans la section analyse du Dashboard Options matériels.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Options matériels :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 2-3</span> → "Types d'options"<br>
+                        • Caméra intérieure : 45 230 (80,24%)<br>
+                        • Caméra extérieure : 8 262 (14,66%)<br>
+                        • Prise connectée : 2 874 (5,1%)<br>
+                        <span class="dashboard-path">Page 4</span> → "Canal souscription"<br>
+                        • Le jour de la souscription : 100 057 (81,36%)<br>
+                        • Le jour de l'installation : 11 189 (9,1%)<br>
+                        • Mobile/CRC : 6 375 (5,18%)
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par type :</div>
+                    • <strong>Caméra intérieure</strong> : Option principale (80,24%)<br>
+                    • <strong>Caméra extérieure</strong> : Option secondaire (14,66%)<br>
+                    • <strong>Prise connectée</strong> : Option spécialisée (5,1%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">🛠️ Options matériels > Types</a>
+                </div>
+            </div>
+
+            <!-- Fiche Client - Éléments consultables -->
+            <div class="qa-item" data-category="client" data-keywords="fiche client informations contrat historique installation sav contacts">
+                <div class="qa-category">Client</div>
+                <div class="qa-question">Quels éléments consulter dans la fiche client ?</div>
+                <div class="qa-answer">
+                    La fiche client contient tous les éléments du parcours client organisés par sections.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Fiche client :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Section 1</span> → "Informations client" : nom, prénom, adresse, caisse/DO<br>
+                        <span class="dashboard-path">Section 2</span> → "Contrat état actuel" : canal, pack, produit, partenaire, état<br>
+                        <span class="dashboard-path">Section 3</span> → "Historique installation" : technicien, partenaire, clôture<br>
+                        <span class="dashboard-path">Section 4</span> → "Historique SAV" : événements, RDV, statuts<br>
+                        <span class="dashboard-path">Section 5</span> → "Contacts client" : traces, réclamations<br>
+                        <span class="dashboard-path">Section 6</span> → "Retour enquêtes" : NPS, verbatims
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par section :</div>
+                    • <strong>Informations</strong> : Données statiques<br>
+                    • <strong>Historique</strong> : Données chronologiques<br>
+                    • <strong>Contacts</strong> : Données relationnelles
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">👤 Fiche client</a>
+                </div>
+            </div>
+
+            <!-- Traces - KPI Traces -->
+            <div class="qa-item" data-category="client" data-keywords="traces total domaine technique administratif logistique appel téléphonique">
+                <div class="qa-category">Traces</div>
+                <div class="qa-question">Où trouver les KPI des traces client ?</div>
+                <div class="qa-answer">
+                    Les KPI des traces client sont dans la section principale du Dashboard Traces.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Dashboard Traces :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI Traces"<br>
+                        • Nombre total traces : 170 416<br>
+                        • Technique : 73 220 (42%)<br>
+                        • Administratif : 46 756 (27,44%)<br>
+                        • Logistique : 45 192 (26%)<br>
+                        • Appel téléphonique : 77 660 (45%)<br>
+                        • Renseignement/Information : 19 661 (11,54%)<br>
+                        • Défaut technique : 18 300+ (10%+)
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par domaine :</div>
+                    • <strong>Technique</strong> : Domaine principal (42%)<br>
+                    • <strong>Administratif</strong> : Domaine secondaire (27,44%)<br>
+                    • <strong>Logistique</strong> : Domaine opérationnel (26%)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📞 Dashboard Traces</a>
+                </div>
+            </div>
+
+            <!-- Comité Opérationnel - KPI Synthèse -->
+            <div class="qa-item" data-category="kpi" data-keywords="comité opérationnel portefeuille tsb actif stock réel planification">
+                <div class="qa-category">Comité</div>
+                <div class="qa-question">Où trouver les KPI du comité opérationnel ?</div>
+                <div class="qa-answer">
+                    Les KPI du comité opérationnel sont dans la section synthèse du Comité Opérationnel.
+                </div>
+                <div class="location-info">
+                    <div class="location-title">📍 Comité Opérationnel :</div>
+                    <div class="location-details">
+                        <span class="dashboard-path">Page 1</span> → "KPI Synthèse"<br>
+                        • Portefeuille total TSB : 149 556<br>
+                        • Portefeuille actif : 136 936<br>
+                        • Stock : 2 636<br>
+                        • Stock réel : 2 485<br>
+                        • Planification client/batch : 3 944<br>
+                        • Planification PTL : 2 733<br>
+                        • Replanification : 1 894<br>
+                        • Délai planif : 2,58 jours
+                    </div>
+                </div>
+                <div class="differences">
+                    <div class="differences-title">⚠️ Différences par indicateur :</div>
+                    • <strong>Portefeuille TSB</strong> : Vue globale (149 556)<br>
+                    • <strong>Portefeuille actif</strong> : Vue opérationnelle (136 936)<br>
+                    • <strong>Stock réel</strong> : Vue technique (2 485)
+                </div>
+                <div class="qa-dashboards">
+                    <a href="#" class="dashboard-link">📊 Comité Opérationnel</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-results hidden" id="noResults">
+            <h3>🔍 Aucun résultat trouvé</h3>
+            <p>Essayez avec d'autres mots-clés ou contactez le support Power BI.</p>
+            <p><strong>Suggestions :</strong> délai, taux, KPI, alarme, client, installation, planification</p>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const qaItems = document.querySelectorAll('.qa-item');
+        const qaGrid = document.getElementById('qaGrid');
+        const resultsCount = document.getElementById('resultsCount');
+        const noResults = document.getElementById('noResults');
+
+        let currentCategory = 'all';
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            qaItems.forEach(item => {
+                const category = item.dataset.category;
+                const keywords = item.dataset.keywords.toLowerCase();
+                const question = item.querySelector('.qa-question').textContent.toLowerCase();
+                const answer = item.querySelector('.qa-answer').textContent.toLowerCase();
+                const locationInfo = item.querySelector('.location-info') ? item.querySelector('.location-info').textContent.toLowerCase() : '';
+
+                const matchesSearch = searchTerm === '' || 
+                    keywords.includes(searchTerm) || 
+                    question.includes(searchTerm) || 
+                    answer.includes(searchTerm) ||
+                    locationInfo.includes(searchTerm);
+
+                const matchesCategory = currentCategory === 'all' || category === currentCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            resultsCount.textContent = `${visibleCount} résultat${visibleCount > 1 ? 's' : ''} trouvé${visibleCount > 1 ? 's' : ''}`;
+
+            if (visibleCount === 0) {
+                qaGrid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                qaGrid.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
+        }
+
+        searchInput.addEventListener('input', performSearch);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                performSearch();
+            });
+        });
+
+        performSearch();
+    </script>
+</body>
+</html>
